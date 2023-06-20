@@ -44,7 +44,7 @@ async def polling_job(subid, ctx, success_handler, failure_handler, timeout_hand
         response = submission_status(subid)
         job_id: int = response['jobs'][0]
         job_status: str = jobStatus(job_id)
-        #TODO: Start job tracking in a separate function. Save job_id into DB?
+        #TODO: Start job tracking in a separate function.
 
         if job_status == 'success':
             result_url = f"http://nova.astrometry.net/annotated_display/{job_id}"

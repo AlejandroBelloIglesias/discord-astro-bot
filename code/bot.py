@@ -5,30 +5,27 @@ from discord.ext.commands import Bot
 from typing import Optional
 
 
-# Send messages
-async def sendMessage(message, channel):
-    try:
-        await channel.send(message)
-    except Exception as e:
-        print(e)
-
-
 intents = discord.Intents.default()
 intents.message_content = True
 bot = Bot("/", intents=intents)
 
-
 @bot.event
-async def on_ready(): #TODO: Esto sirve XD???
-    print("Bot is up and ready!")
-    try:
-        sync = await bot.tree.sync()
-        print(f"Synced {len(sync)} commands")
-    except:
-        print("Error syncing commands.")
+async def on_message(message):
 
+    if message.author == bot.user:
+        return
+    
+    if bot.user.mentioned_in(message):
+        ctx = await bot.get_context(message)
+        attachment: Optional[discord.Attachment] = None
+        if len(message.attachments)>0:
+            attachment = message.attachments[0]
+        await analyze(ctx, attachment)
 
-@bot.command()
+    await bot.process_commands(message)
+        
+        
+@bot.command(aliases=["analyse","analize","analise","analysis","process","scan","examine","inspect"])
 async def analyze(ctx, attachment: Optional[discord.Attachment]):
     
     # Input error control 
@@ -53,24 +50,25 @@ async def analyze(ctx, attachment: Optional[discord.Attachment]):
                             timeout_handler=on_timeout)
 
 
-@bot.command(name="ping")
-async def ping(ctx):
-    latency = bot.latency
-    await ctx.send(latency)
+@bot.command()
+async def todos(ctx):
+    await ctx.send("List of things to be made in the future:\n"+
+                   "\t· DIFFICULT/2h: concurrency\n"+
+                   "\t· EASY/FAST: Recent changes to the bot /patchnotes\n")
 
 
 async def on_success(ctx, result_url, subid):
     user_image = utils.getUserImageFromSubId(subid)
-    await ctx.send(f'Image processing SUCCEDED. Result at https://nova.astrometry.net/user_images/{user_image}')
+    await ctx.send(f'{ctx.message.author.mention} Image processing SUCCEDED. Result at https://nova.astrometry.net/user_images/{user_image}')
     await ctx.send(result_url)
 
 
 async def on_failure(ctx, subid):
     user_image = utils.getUserImageFromSubId(subid)
-    await ctx.send(f'Image processing FAILED. Result at https://nova.astrometry.net/user_images/{user_image}')
+    await ctx.send(f'{ctx.message.author.mention} Image processing FAILED. Result at https://nova.astrometry.net/user_images/{user_image}')
     
 async def on_timeout(ctx):
-    await ctx.send(f'Image processing is taking too long. Check yourself the result at the previous URL.')
+    await ctx.send(f'{ctx.message.author.mention} Image processing is taking too long. Check yourself the result at the previous URL.')
 
 
 bot.run(keys.DISCORD_TOKEN)
