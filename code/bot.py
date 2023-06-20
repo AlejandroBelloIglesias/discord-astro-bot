@@ -24,7 +24,7 @@ async def on_message(message):
 
     await bot.process_commands(message)
         
-        
+
 @bot.command(aliases=["analyse","analize","analise","analysis","process","scan","examine","inspect"])
 async def analyze(ctx, attachment: Optional[discord.Attachment]):
     
@@ -53,8 +53,17 @@ async def analyze(ctx, attachment: Optional[discord.Attachment]):
 @bot.command()
 async def todos(ctx):
     await ctx.send("List of things to be made in the future:\n"+
-                   "\t· DIFFICULT/2h: concurrency\n"+
-                   "\t· EASY/FAST: Recent changes to the bot /patchnotes\n")
+                   "\t· Make Discord recognize my slash /commands\n"+
+                   "\t· Add /help and /command descriptions\n")
+    
+
+@bot.command(aliases=["newfeatures","features", "lastfeatures"])
+async def patchnotes(ctx):
+    await ctx.send("List of last features:\n"+
+                   "\t· You can call me with /analise, /analyse, /process, etc. or just @ mention me \n"+
+                   "\t· I will @ mention you on result (success, failure or timeout)\n"+
+                   "\t· I support multiple requests at the same time (Finally)\n"+
+                   "\t· \n")
 
 
 async def on_success(ctx, result_url, subid):

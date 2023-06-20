@@ -2,6 +2,7 @@ import requests
 import keys
 import json
 import time
+import asyncio
 
 def isImage(attachment):
     return attachment.content_type.startswith('image')
@@ -36,7 +37,7 @@ async def polling_job(subid, ctx, success_handler, failure_handler, timeout_hand
     # Polling loop
     timeout: float = time.time() + 600  # Set max timeout to 10 minutes (600 sec)
     while True:
-        time.sleep(5)
+        await asyncio.sleep(5)
 
         if not has_job(subid):
             continue
